@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>タスク管理アプリ</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header class="header">
+    <h1 class="header__title">タスク管理アプリ</h1>
+    <button class="btn btn--primary" id="openCreateModal">＋ タスク追加</button>
+  </header>
+
+  <!-- ボードエリア -->
+  <main class="board">
+    <div class="column" id="col-todo" data-status="todo">
+      <div class="column__header">
+        <span class="column__dot column__dot--todo"></span>
+        <h2 class="column__title">未着手</h2>
+        <span class="column__count" id="count-todo">0</span>
+      </div>
+      <div class="column__sort">
+        <button class="sort-btn" data-status="todo" data-sort="priority">優先度順</button>
+        <button class="sort-btn" data-status="todo" data-sort="dueDate">期限順</button>
+      </div>
+      <div class="column__cards" id="cards-todo"></div>
+    </div>
+
+    <div class="column" id="col-in-progress" data-status="in-progress">
+      <div class="column__header">
+        <span class="column__dot column__dot--in-progress"></span>
+        <h2 class="column__title">進行中</h2>
+        <span class="column__count" id="count-in-progress">0</span>
+      </div>
+      <div class="column__sort">
+        <button class="sort-btn" data-status="in-progress" data-sort="priority">優先度順</button>
+        <button class="sort-btn" data-status="in-progress" data-sort="dueDate">期限順</button>
+      </div>
+      <div class="column__cards" id="cards-in-progress"></div>
+    </div>
+
+    <div class="column" id="col-done" data-status="done">
+      <div class="column__header">
+        <span class="column__dot column__dot--done"></span>
+        <h2 class="column__title">完了</h2>
+        <span class="column__count" id="count-done">0</span>
+      </div>
+      <div class="column__sort">
+        <button class="sort-btn" data-status="done" data-sort="priority">優先度順</button>
+        <button class="sort-btn" data-status="done" data-sort="dueDate">期限順</button>
+      </div>
+      <div class="column__cards" id="cards-done"></div>
+    </div>
+  </main>
+
+  <!-- オーバーレイ -->
+  <div class="overlay hidden" id="overlay"></div>
+
+  <!-- タスク作成モーダル -->
+  <div class="modal hidden" id="createModal" role="dialog" aria-modal="true" aria-labelledby="createModalTitle">
+    <div class="modal__header">
+      <h2 class="modal__title" id="createModalTitle">タスクを追加</h2>
+      <button class="modal__close" id="closeCreateModal" aria-label="閉じる">✕</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-group">
+        <label class="form-label" for="createTitle">タイトル <span class="required">*</span></label>
+        <input class="form-input" type="text" id="createTitle" placeholder="タスクのタイトルを入力" maxlength="50" />
+        <span class="form-error hidden" id="createTitleError">タイトルは必須です</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="createDesc">説明文</label>
+        <textarea class="form-textarea" id="createDesc" placeholder="詳細メモを入力（任意）" maxlength="200"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="createPriority">優先度 <span class="required">*</span></label>
+          <select class="form-select" id="createPriority">
+            <option value="">選択してください</option>
+            <option value="high">🔴 高</option>
+            <option value="medium">🟡 中</option>
+            <option value="low">🟢 低</option>
+          </select>
+          <span class="form-error hidden" id="createPriorityError">優先度は必須です</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="createDueDate">期限</label>
+          <input class="form-input" type="date" id="createDueDate" />
+        </div>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--ghost" id="cancelCreate">キャンセル</button>
+      <button class="btn btn--primary" id="saveCreate">保存する</button>
+    </div>
+  </div>
+
+  <!-- タスク編集モーダル -->
+  <div class="modal hidden" id="editModal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+    <div class="modal__header">
+      <h2 class="modal__title" id="editModalTitle">タスクを編集</h2>
+      <button class="modal__close" id="closeEditModal" aria-label="閉じる">✕</button>
+    </div>
+    <div class="modal__body">
+      <input type="hidden" id="editTaskId" />
+      <div class="form-group">
+        <label class="form-label" for="editTitle">タイトル <span class="required">*</span></label>
+        <input class="form-input" type="text" id="editTitle" placeholder="タスクのタイトルを入力" maxlength="50" />
+        <span class="form-error hidden" id="editTitleError">タイトルは必須です</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="editDesc">説明文</label>
+        <textarea class="form-textarea" id="editDesc" placeholder="詳細メモを入力（任意）" maxlength="200"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="editPriority">優先度 <span class="required">*</span></label>
+          <select class="form-select" id="editPriority">
+            <option value="">選択してください</option>
+            <option value="high">🔴 高</option>
+            <option value="medium">🟡 中</option>
+            <option value="low">🟢 低</option>
+          </select>
+          <span class="form-error hidden" id="editPriorityError">優先度は必須です</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="editDueDate">期限</label>
+          <input class="form-input" type="date" id="editDueDate" />
+        </div>
+      </div>
+    </div>
+    <div class="modal__footer modal__footer--edit">
+      <button class="btn btn--danger" id="deleteTask">削除する</button>
+      <div class="modal__footer-right">
+        <button class="btn btn--ghost" id="cancelEdit">キャンセル</button>
+        <button class="btn btn--primary" id="saveEdit">保存する</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
