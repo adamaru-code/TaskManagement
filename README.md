@@ -375,6 +375,26 @@ MySQLに作成するテーブルの構造です。シングルユーザー前提
 
 ---
 
+### 5-6. ER図
+
+シングルユーザー前提のため、テーブルは `tasks` の1つのみです。
+
+```mermaid
+erDiagram
+    TASKS {
+        BIGINT id PK "AUTO_INCREMENT"
+        VARCHAR_50 title "NOT NULL"
+        VARCHAR_200 description "NULL可"
+        VARCHAR_10 priority "NOT NULL high/medium/low"
+        DATE due_date "NULL可"
+        VARCHAR_20 status "NOT NULL todo/in-progress/done"
+        DATETIME created_at "NOT NULL"
+        DATETIME updated_at "NOT NULL"
+    }
+```
+
+---
+
 ## 6. 機能一覧
 
 ### 基本操作（CRUD）
