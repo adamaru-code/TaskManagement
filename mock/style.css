@@ -87,9 +87,12 @@ body {
   transition: background 0.15s;
 }
 
-.column.drag-over {
-  background: #d0d5e8;
-  outline: 2px dashed #4a6cf7;
+.drop-placeholder {
+  height: 56px;
+  border: 2px dashed #4a6cf7;
+  border-radius: 8px;
+  background: rgba(74, 108, 247, 0.08);
+  flex-shrink: 0;
 }
 
 .column__header {
@@ -148,7 +151,7 @@ body {
   color: #4a6cf7;
   border-color: #4a6cf7;
 }
-.sort-btn.active {
+.sort-btn:active {
   background: #4a6cf7;
   color: #fff;
   border-color: #4a6cf7;

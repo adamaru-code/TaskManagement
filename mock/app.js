@@ -32,15 +32,13 @@ function generateId() {
   return `task-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
-// ===== ソート状態 =====
-
-const columnSort = { 'todo': null, 'in-progress': null, 'done': null };
+// ===== ソート（純関数） =====
 
 const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 };
 
-function sortedTasks(filtered, sortKey) {
-  if (!sortKey) return filtered;
-  return [...filtered].sort((a, b) => {
+function sortedTasks(list, sortKey) {
+  if (!sortKey) return list;
+  return [...list].sort((a, b) => {
     if (sortKey === 'priority') {
       return PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority];
     }
@@ -63,7 +61,7 @@ function renderBoard() {
     const filtered = tasks.filter(t => t.status === status);
     count.textContent = filtered.length;
     container.innerHTML = '';
-    sortedTasks(filtered, columnSort[status]).forEach(task => container.appendChild(createCardEl(task)));
+    filtered.forEach(task => container.appendChild(createCardEl(task)));
   });
 }
 
@@ -130,30 +128,73 @@ function onDragStart(e) {
 
 function onDragEnd(e) {
   e.currentTarget.classList.remove('dragging');
+  removePlaceholder();
+}
+
+function getDropIndex(container, mouseY) {
+  const cards = [...container.querySelectorAll('.card:not(.dragging)')];
+  for (let i = 0; i < cards.length; i++) {
+    const rect = cards[i].getBoundingClientRect();
+    if (mouseY < rect.top + rect.height / 2) return i;
+  }
+  return cards.length;
+}
+
+function removePlaceholder() {
+  document.querySelectorAll('.drop-placeholder').forEach(el => el.remove());
+}
+
+function showPlaceholder(container, index) {
+  removePlaceholder();
+  const placeholder = document.createElement('div');
+  placeholder.className = 'drop-placeholder';
+  const cards = [...container.querySelectorAll('.card:not(.dragging)')];
+  if (index >= cards.length) {
+    container.appendChild(placeholder);
+  } else {
+    container.insertBefore(placeholder, cards[index]);
+  }
+}
+
+function moveTaskTo(taskId, targetStatus, dropIndexInColumn) {
+  const dragged = tasks.find(t => t.id === taskId);
+  if (!dragged) return;
+  dragged.status = targetStatus;
+
+  const others = tasks.filter(t => t.id !== taskId);
+  const colTasks = others.filter(t => t.status === targetStatus);
+  const insertBefore = colTasks[dropIndexInColumn];
+  const globalIdx = insertBefore ? others.indexOf(insertBefore) : others.length;
+
+  others.splice(globalIdx, 0, dragged);
+  tasks = others;
+  saveTasks();
+  renderBoard();
 }
 
 document.querySelectorAll('.column').forEach(col => {
+  const container = col.querySelector('.column__cards');
+
   col.addEventListener('dragover', e => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
-    col.classList.add('drag-over');
+    const index = getDropIndex(container, e.clientY);
+    showPlaceholder(container, index);
   });
 
   col.addEventListener('dragleave', e => {
     if (!col.contains(e.relatedTarget)) {
-      col.classList.remove('drag-over');
+      removePlaceholder();
     }
   });
 
   col.addEventListener('drop', e => {
     e.preventDefault();
-    col.classList.remove('drag-over');
+    const index = getDropIndex(container, e.clientY);
+    removePlaceholder();
     const newStatus = col.dataset.status;
-    const task = tasks.find(t => t.id === draggedId);
-    if (task && task.status !== newStatus) {
-      task.status = newStatus;
-      saveTasks();
-      renderBoard();
+    if (draggedId) {
+      moveTaskTo(draggedId, newStatus, index);
     }
     draggedId = null;
   });
@@ -303,24 +344,20 @@ function clearErrors(prefix) {
   });
 }
 
-// ===== ソートボタン =====
+// ===== ソートボタン（破壊的アクション） =====
+
+function applySort(status, sortKey) {
+  const inColumn = tasks.filter(t => t.status === status);
+  const sorted = sortedTasks(inColumn, sortKey);
+  let i = 0;
+  tasks = tasks.map(t => t.status === status ? sorted[i++] : t);
+  saveTasks();
+  renderBoard();
+}
 
 document.querySelectorAll('.sort-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    const status  = btn.dataset.status;
-    const sortKey = btn.dataset.sort;
-
-    if (columnSort[status] === sortKey) {
-      columnSort[status] = null;
-    } else {
-      columnSort[status] = sortKey;
-    }
-
-    document.querySelectorAll(`.sort-btn[data-status="${status}"]`).forEach(b => {
-      b.classList.toggle('active', b.dataset.sort === columnSort[status]);
-    });
-
-    renderBoard();
+    applySort(btn.dataset.status, btn.dataset.sort);
   });
 });
 
