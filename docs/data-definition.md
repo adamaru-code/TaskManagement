@@ -19,6 +19,7 @@ erDiagram
         VARCHAR_10 priority "NOT NULL high/medium/low"
         DATE due_date "NULL可"
         VARCHAR_20 status "NOT NULL todo/in-progress/done"
+        INT display_order "NOT NULL カラム内の表示順"
         DATETIME created_at "NOT NULL"
         DATETIME updated_at "NOT NULL"
     }
@@ -37,6 +38,7 @@ erDiagram
 | 優先度 | 高・中・低の3段階 | 必須 |
 | 期限 | 完了させたい日付 | 任意 |
 | ステータス | 未着手・進行中・完了（カラムの位置と連動） | 自動 |
+| 表示順 | 同じカラム内でのカードの並び順（手動並び替え・ソート操作で更新） | 自動 |
 
 ---
 
@@ -52,6 +54,7 @@ erDiagram
 | `priority` | string | 必須 | 優先度。`"high"` / `"medium"` / `"low"` の3択 | `"high"` |
 | `dueDate` | string \| null | 任意 | 期限日。YYYY-MM-DD形式。未設定時は `null` | `"2026-05-10"` / `null` |
 | `status` | string | 必須 | ステータス。`"todo"` / `"in-progress"` / `"done"` の3択 | `"todo"` |
+| `displayOrder` | number | 必須（自動） | 同じカラム内での表示順（小さいほど上）。手動並び替え・ソート操作で更新 | `0` |
 | `createdAt` | string | 必須（自動） | 作成日時。ISO 8601形式で自動セット | `"2026-05-04T09:00:00"` |
 | `updatedAt` | string | 必須（自動） | 最終更新日時。編集のたびに自動更新 | `"2026-05-04T10:30:00"` |
 
@@ -65,6 +68,7 @@ erDiagram
   "priority": "high",
   "dueDate": "2026-05-10",
   "status": "todo",
+  "displayOrder": 0,
   "createdAt": "2026-05-04T09:00:00",
   "updatedAt": "2026-05-04T10:30:00"
 }
@@ -106,6 +110,7 @@ MySQLに作成するテーブルの構造です。シングルユーザー前提
 | `priority` | VARCHAR(10) | NOT NULL | high / medium / low |
 | `due_date` | DATE | NULL可 | 期限 |
 | `status` | VARCHAR(20) | NOT NULL | todo / in-progress / done |
+| `display_order` | INT | NOT NULL | 同一 status 内での表示順（小さいほど上） |
 | `created_at` | DATETIME | NOT NULL | 作成日時（自動） |
 | `updated_at` | DATETIME | NOT NULL | 更新日時（自動） |
 
@@ -117,10 +122,12 @@ MySQLに作成するテーブルの構造です。シングルユーザー前提
 
 | メソッド | パス | 説明 |
 |---|---|---|
-| GET | `/api/tasks` | タスク一覧取得 |
+| GET | `/api/tasks` | タスク一覧取得（`status` ごとに `display_order` 昇順で返す） |
 | POST | `/api/tasks` | タスク新規作成 |
-| PUT | `/api/tasks/{id}` | タスク更新（内容・ステータス変更） |
+| PUT | `/api/tasks/{id}` | タスク更新（内容・ステータス・表示順を変更） |
 | DELETE | `/api/tasks/{id}` | タスク削除 |
+
+> カラム内の手動並び替えやソート時は、影響を受ける複数タスクの `displayOrder` を `PUT /api/tasks/{id}` で順次更新する。
 
 ---
 
