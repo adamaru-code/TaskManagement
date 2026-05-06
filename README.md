@@ -30,7 +30,7 @@
 | ステータス変更 | ドラッグ&ドロップでカラム間を移動する |
 | カード並び替え | カラム内でカードをドラッグして任意の位置に並び替える |
 | ソート | ボタン操作でカラム内を優先度順 / 期限順に並び替える |
-| データ永続化 | APIを通じてMySQLにデータを保存・取得する |
+| データ永続化 | APIを通じてPostgreSQLにデータを保存・取得する |
 
 詳細は [ユースケース](docs/use-cases.md) を参照。
 
@@ -69,13 +69,13 @@
 
 ## 5. 技術スタック（概要）
 
-React + Spring Boot + MySQL のフルスタック構成です。
+React + Spring Boot + PostgreSQL のフルスタック構成です。バックエンドのビルドツールは Gradle、フロントエンドのビルドツールは Vite を使用します。
 
 | 役割 | 技術 |
 |------|------|
-| フロントエンド | React |
-| バックエンド | Java / Spring Boot |
-| データベース | MySQL |
+| フロントエンド | React（TypeScript / Vite） |
+| バックエンド | Java 21 / Spring Boot 3.x（Gradle） |
+| データベース | PostgreSQL |
 | API通信 | REST API（JSON） |
 
 詳細は [技術スタック](docs/tech-stack.md) を参照。

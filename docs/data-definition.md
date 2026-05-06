@@ -100,19 +100,19 @@ erDiagram
 
 ## DBテーブル定義（tasks テーブル）
 
-MySQLに作成するテーブルの構造です。シングルユーザー前提のため、ユーザー管理テーブルは持ちません。
+PostgreSQLに作成するテーブルの構造です。シングルユーザー前提のため、ユーザー管理テーブルは持ちません。
 
 | カラム名 | 型 | 制約 | 説明 |
 |---|---|---|---|
-| `id` | BIGINT | PRIMARY KEY, AUTO_INCREMENT | タスクID（自動採番） |
+| `id` | BIGSERIAL | PRIMARY KEY | タスクID（自動採番） |
 | `title` | VARCHAR(50) | NOT NULL | タイトル |
 | `description` | VARCHAR(200) | NULL可 | 説明文 |
 | `priority` | VARCHAR(10) | NOT NULL | high / medium / low |
 | `due_date` | DATE | NULL可 | 期限 |
 | `status` | VARCHAR(20) | NOT NULL | todo / in-progress / done |
 | `display_order` | INT | NOT NULL | 同一 status 内での表示順（小さいほど上） |
-| `created_at` | DATETIME | NOT NULL | 作成日時（自動） |
-| `updated_at` | DATETIME | NOT NULL | 更新日時（自動） |
+| `created_at` | TIMESTAMP | NOT NULL | 作成日時（自動） |
+| `updated_at` | TIMESTAMP | NOT NULL | 更新日時（自動） |
 
 ---
 
