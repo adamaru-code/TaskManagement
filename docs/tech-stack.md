@@ -23,7 +23,7 @@
 | ボイラープレート削減 | Lombok | |
 | DBマイグレーション | Flyway | スキーマ変更を SQL ファイルで管理 |
 | API ドキュメント | springdoc-openapi | Swagger UI を自動生成 |
-| テスト | JUnit 5 / Spring Boot Test / Testcontainers | DB込みの統合テスト用 |
+| テスト | JUnit 5 / Spring Boot Test | 単体テスト・Web 層テスト中心。DB 統合テストは H2（インメモリ DB）で代用、Docker 導入後に Testcontainers へ移行検討 |
 
 ## フロントエンド詳細
 
@@ -42,12 +42,13 @@
 | 項目 | 採用技術 | 補足 |
 |------|----------|------|
 | RDBMS | PostgreSQL | |
-| ローカル起動 | Docker Compose | コンテナで起動して環境を統一 |
+| ローカル起動（当面） | Mac に直接インストール | Postgres.app または Homebrew（`brew install postgresql@16`）で起動 |
+| ローカル起動（将来） | Docker Compose（任意・後日導入検討） | 学習が進んだ段階で環境統一のため導入を検討 |
 
 ## 開発ツール
 
-| 項目 | 採用技術 |
-|------|----------|
-| バージョン管理 | Git / GitHub |
-| エディタ | Cursor |
-| コンテナ | Docker / Docker Compose |
+| 項目 | 採用技術 | 補足 |
+|------|----------|------|
+| バージョン管理 | Git / GitHub | |
+| エディタ | Cursor | |
+| コンテナ（任意・後日導入検討） | Docker / Docker Compose | 当面は使用しない。プロジェクト稼働後に学習ステップとして導入を検討 |
