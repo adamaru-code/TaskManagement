@@ -15,8 +15,8 @@
 
 | 項目 | 採用技術 | 補足 |
 |------|----------|------|
-| 言語 | Java 21（LTS） | 長期サポート版 |
-| フレームワーク | Spring Boot 3.x | |
+| 言語 | Java 25（LTS） | 長期サポート版 |
+| フレームワーク | Spring Boot 4.0.x | 最新安定版（GA） |
 | ビルドツール | **Gradle** | Groovy DSL（`build.gradle`）を使用 |
 | ORM / DBアクセス | Spring Data JPA | |
 | 入力検証 | Spring Validation | リクエストの値チェック |
