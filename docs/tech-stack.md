@@ -42,8 +42,9 @@
 | 項目 | 採用技術 | 補足 |
 |------|----------|------|
 | RDBMS | PostgreSQL | |
-| ローカル起動（当面） | Mac に直接インストール | Postgres.app または Homebrew（`brew install postgresql@16`）で起動 |
-| ローカル起動（将来） | Docker Compose（任意・後日導入検討） | 学習が進んだ段階で環境統一のため導入を検討 |
+| バージョン | PostgreSQL 17 | `postgres:17` イメージを使用 |
+| ローカル起動 | Docker Compose | プロジェクトルートの `docker-compose.yml` で起動 |
+| 接続情報（開発用） | host=localhost / port=5432 / db=taskmanagement / user=taskmanagement / password=taskmanagement | パスワードは開発用固定値。本番では別管理 |
 
 ## 開発ツール
 
@@ -51,4 +52,4 @@
 |------|----------|------|
 | バージョン管理 | Git / GitHub | |
 | エディタ | Cursor | |
-| コンテナ（任意・後日導入検討） | Docker / Docker Compose | 当面は使用しない。プロジェクト稼働後に学習ステップとして導入を検討 |
+| コンテナ | Docker Desktop / Docker Compose | PostgreSQL のローカル起動に使用（必須） |
