@@ -68,9 +68,53 @@ git checkout -b feature/12-add-task-create-endpoint
 
 ## 4. 実装〜コミット
 
-- コミットメッセージは英語・命令形（既存履歴に合わせる）
+### コミットメッセージのフォーマット
+
+**Conventional Commits 形式**で、説明部分は日本語で記述する：
+
+```
+<type>: <日本語の説明>
+```
+
+- `<type>` は英語の小文字。次のいずれか：
+  - `feat`: 新機能
+  - `fix`: バグ修正
+  - `docs`: ドキュメントのみの変更
+  - `chore`: ビルド・依存・設定など雑務
+  - `refactor`: 機能変更を伴わないコード整理
+  - `test`: テストの追加・修正
+- 1 行目（要約）は簡潔に。50〜70文字程度を目安に
+- 詳細が必要なら 2 行目を空けて 3 行目以降に書く
 - Co-Authored-By タグを末尾に付ける（Claude が手を動かしたコミットの場合）
 - 1 PR の中で複数コミットになっても OK（途中状態のコミットを残してよい）
+
+### type の対応関係（コミット ↔ ブランチ）
+
+Conventional Commits の標準は `feat` だが、ブランチ名は読みやすさ優先で `feature/...` を使う。
+両者は意図的に並存させる（`feat` コミットは `feature/...` ブランチに入る）。
+
+| 用途 | コミット type | ブランチ type |
+|---|---|---|
+| 新機能 | `feat` | `feature` |
+| バグ修正 | `fix` | `fix` |
+| ドキュメント | `docs` | `docs` |
+| 雑務 | `chore` | `chore` |
+| リファクタ | `refactor` | `refactor` |
+| テスト | `test` | `test` |
+
+### 例
+
+```
+feat: タスク作成エンドポイント (POST /api/tasks) を追加
+
+リクエスト本文を Task エンティティへマッピングし、
+created_at / updated_at を自動でセットする。バリデーションは
+@Valid + @NotBlank で title / priority を必須化。
+
+Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
+```
+
+過去のコミット（英語）はそのまま残す。今後のコミットからこのフォーマットに切り替える。
 
 ---
 
