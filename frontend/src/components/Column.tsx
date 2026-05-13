@@ -1,0 +1,32 @@
+import type { Task, TaskStatus } from '../types/task';
+import { TaskCard } from './TaskCard';
+
+const statusMeta: Record<TaskStatus, { label: string; dot: string }> = {
+  todo: { label: '未着手', dot: 'bg-slate-400' },
+  'in-progress': { label: '進行中', dot: 'bg-blue-500' },
+  done: { label: '完了', dot: 'bg-green-500' },
+};
+
+type Props = { status: TaskStatus; tasks: Task[] };
+
+export function Column({ status, tasks }: Props) {
+  const meta = statusMeta[status];
+  const sorted = [...tasks].sort((a, b) => a.displayOrder - b.displayOrder);
+
+  return (
+    <section className="flex-1 bg-slate-100 rounded-lg p-3 min-w-[280px]">
+      <header className="flex items-center justify-between mb-3 px-1">
+        <div className="flex items-center gap-2">
+          <span className={`inline-block w-2 h-2 rounded-full ${meta.dot}`} />
+          <h2 className="font-semibold text-slate-700">{meta.label}</h2>
+        </div>
+        <span className="text-xs text-slate-500">{sorted.length}</span>
+      </header>
+      <div>
+        {sorted.map((t) => (
+          <TaskCard key={t.id} task={t} />
+        ))}
+      </div>
+    </section>
+  );
+}

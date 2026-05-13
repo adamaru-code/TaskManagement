@@ -108,4 +108,17 @@ cd backend
 ./gradlew bootRun
 ```
 
-起動後、`http://localhost:8080/` にアクセスできれば成功（現状はエンドポイント未実装のため 404 が返る）。
+起動後、`http://localhost:8080/api/tasks` で JSON 形式のタスク一覧が取得できれば成功。
+
+### フロントエンド（React + Vite）
+
+データベースとバックエンドが起動している前提で、別ターミナルから:
+
+```bash
+cd frontend
+npm install                 # 初回のみ
+npm run dev                 # http://localhost:5173 で起動
+```
+
+ブラウザで `http://localhost:5173` を開くと、3 カラム（未着手 / 進行中 / 完了）のボード画面にタスクが表示される。
+開発時は Vite のプロキシ機能により、`/api/*` へのリクエストが自動で `http://localhost:8080` に転送される。
