@@ -87,7 +87,9 @@ TaskManagement/
 |------|------|------------|
 | フロントエンド | React + TypeScript + Vite | React 19.2.6 / TypeScript ~6.0.2 / Vite 8.0.12 |
 | スタイリング | Tailwind CSS | 4.3.0 |
+| フロントエンドのパッケージ管理 | Node.js + npm | Node.js（ローカルは v26 系、未固定）/ npm（`package-lock.json` で固定） |
 | バックエンド | Java + Spring Boot（Gradle） | Java 25 / Spring Boot 4.0.6 / Gradle 9.4.1 |
+| バックエンドのパッケージ管理 | Gradle（Maven Central） | Wrapper 経由で 9.4.1 を固定。ビルドツールと一体 |
 | DB アクセス | Spring Data JPA + Flyway | Spring Boot 同梱版 |
 | データベース | PostgreSQL（Docker） | 17 |
 | API 通信 | REST API（JSON） | - |
