@@ -20,6 +20,7 @@
 | 言語 | Java | **25**（LTS） | `backend/build.gradle` の toolchain で固定 |
 | フレームワーク | Spring Boot | **4.0.6** | 最新安定版（GA） |
 | ビルドツール | Gradle | **9.4.1** | Wrapper 経由（`./gradlew`）。Groovy DSL（`build.gradle`） |
+| パッケージ管理 | Gradle（Maven Central） | Gradle 9.4.1 と一体 | `build.gradle` の `dependencies {}` で管理。ビルドツールが依存管理を兼ねる。dependency locking は未設定（必要になったら導入検討） |
 | ORM / DBアクセス | Spring Data JPA | Spring Boot 4.0.6 同梱版 | `spring-boot-starter-data-jpa` |
 | 入力検証 | Spring Validation | Spring Boot 4.0.6 同梱版 | `spring-boot-starter-validation` |
 | ボイラープレート削減 | Lombok | Spring Boot 4.0.6 管理版 | `compileOnly` + `annotationProcessor` |
@@ -35,6 +36,8 @@
 
 | 項目 | 採用技術 | バージョン | 補足 |
 |------|----------|------------|------|
+| ランタイム | Node.js | ローカル開発で v26 系を使用（未固定） | `engines` / `.nvmrc` での強制は未設定。必要になったら `.nvmrc` 追加を検討 |
+| パッケージ管理 | npm | Node.js 同梱版（ローカルは npm 11 系） | `package.json` + `package-lock.json` で依存を固定。Yarn / pnpm は不採用 |
 | ライブラリ | React / React DOM | **19.2.6** | `frontend/package.json` |
 | 言語 | TypeScript | **~6.0.2** | 型安全性の確保 |
 | ビルドツール / 開発サーバー | Vite | **8.0.12** | `npm run dev` で 5173 番ポート |
