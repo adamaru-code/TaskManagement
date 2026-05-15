@@ -12,3 +12,10 @@ export type Task = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type TaskCreateInput = {
+  title: string;
+  description?: string;
+  priority: TaskPriority;
+  dueDate?: string;
+};
