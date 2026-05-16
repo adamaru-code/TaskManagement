@@ -10,9 +10,10 @@ type Props = {
   onDragStart: (id: number) => void;
   onDropOnColumn: (status: TaskStatus, targetIndex: number) => void;
   onSort: (status: TaskStatus, key: SortKey) => void;
+  onAddClick: () => void;
 };
 
-export function Board({ tasks, draggingId, onSelect, onDragStart, onDropOnColumn, onSort }: Props) {
+export function Board({ tasks, draggingId, onSelect, onDragStart, onDropOnColumn, onSort, onAddClick }: Props) {
   return (
     <div className="flex gap-4 p-6">
       {COLUMNS.map((status) => (
@@ -25,6 +26,7 @@ export function Board({ tasks, draggingId, onSelect, onDragStart, onDropOnColumn
           onDragStart={onDragStart}
           onDropOnColumn={onDropOnColumn}
           onSort={onSort}
+          onAddClick={status === 'todo' ? onAddClick : undefined}
         />
       ))}
     </div>

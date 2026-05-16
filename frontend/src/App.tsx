@@ -135,7 +135,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Header onAddClick={() => setIsCreateOpen(true)} />
+      <Header />
       <main>
         {loading && <p className="p-6 text-slate-600">読み込み中...</p>}
         {error && (
@@ -149,6 +149,7 @@ function App() {
             onDragStart={setDraggingId}
             onDropOnColumn={handleDrop}
             onSort={handleSortColumn}
+            onAddClick={() => setIsCreateOpen(true)}
           />
         )}
       </main>

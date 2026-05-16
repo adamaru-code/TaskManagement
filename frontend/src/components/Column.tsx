@@ -17,6 +17,7 @@ type Props = {
   onDragStart: (id: number) => void;
   onDropOnColumn: (status: TaskStatus, targetIndex: number) => void;
   onSort: (status: TaskStatus, key: SortKey) => void;
+  onAddClick?: () => void;
 };
 
 export function Column({
@@ -27,6 +28,7 @@ export function Column({
   onDragStart,
   onDropOnColumn,
   onSort,
+  onAddClick,
 }: Props) {
   const meta = statusMeta[status];
   const sorted = [...tasks].sort((a, b) => a.displayOrder - b.displayOrder);
@@ -66,6 +68,15 @@ export function Column({
           期限順
         </button>
       </div>
+      {onAddClick && (
+        <button
+          type="button"
+          onClick={onAddClick}
+          className="w-full mb-2 rounded-md border border-dashed border-slate-400 bg-white py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+        >
+          ＋タスク追加
+        </button>
+      )}
       <div className="min-h-[40px]">
         {sorted.map((t, i) => (
           <TaskCard
