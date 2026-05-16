@@ -19,3 +19,5 @@ export type TaskCreateInput = {
   priority: TaskPriority;
   dueDate?: string;
 };
+
+export type TaskUpdateInput = TaskCreateInput;

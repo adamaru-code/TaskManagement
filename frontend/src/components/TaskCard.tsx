@@ -6,13 +6,15 @@ const priorityBadge: Record<TaskPriority, { emoji: string; label: string; border
   low: { emoji: '🟢', label: 'Low', border: 'border-l-green-500' },
 };
 
-type Props = { task: Task };
+type Props = { task: Task; onSelect?: (task: Task) => void };
 
-export function TaskCard({ task }: Props) {
+export function TaskCard({ task, onSelect }: Props) {
   const p = priorityBadge[task.priority];
   return (
-    <div
-      className={`bg-white rounded-md shadow-sm border border-slate-200 border-l-4 ${p.border} p-3 mb-2`}
+    <button
+      type="button"
+      onClick={() => onSelect?.(task)}
+      className={`w-full text-left bg-white rounded-md shadow-sm border border-slate-200 border-l-4 ${p.border} p-3 mb-2 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400`}
     >
       <div className="font-medium text-slate-800">{task.title}</div>
       <div className="mt-2 flex items-center gap-2 text-xs text-slate-600">
@@ -21,6 +23,6 @@ export function TaskCard({ task }: Props) {
         </span>
         {task.dueDate && <span className="inline-flex items-center gap-1">📅 {task.dueDate}</span>}
       </div>
-    </div>
+    </button>
   );
 }

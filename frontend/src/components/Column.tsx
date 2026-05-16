@@ -7,9 +7,9 @@ const statusMeta: Record<TaskStatus, { label: string; dot: string }> = {
   done: { label: '完了', dot: 'bg-green-500' },
 };
 
-type Props = { status: TaskStatus; tasks: Task[] };
+type Props = { status: TaskStatus; tasks: Task[]; onSelect?: (task: Task) => void };
 
-export function Column({ status, tasks }: Props) {
+export function Column({ status, tasks, onSelect }: Props) {
   const meta = statusMeta[status];
   const sorted = [...tasks].sort((a, b) => a.displayOrder - b.displayOrder);
 
@@ -24,7 +24,7 @@ export function Column({ status, tasks }: Props) {
       </header>
       <div>
         {sorted.map((t) => (
-          <TaskCard key={t.id} task={t} />
+          <TaskCard key={t.id} task={t} onSelect={onSelect} />
         ))}
       </div>
     </section>

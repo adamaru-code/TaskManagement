@@ -1,9 +1,11 @@
 import { useState, type FormEvent } from 'react';
-import type { TaskCreateInput, TaskPriority } from '../types/task';
+import type { Task, TaskCreateInput, TaskPriority } from '../types/task';
 
 type Props = {
   onSubmit: (input: TaskCreateInput) => Promise<void>;
   onCancel: () => void;
+  initial?: Task;
+  submitLabel?: string;
 };
 
 const PRIORITIES: { value: TaskPriority; label: string }[] = [
@@ -12,11 +14,11 @@ const PRIORITIES: { value: TaskPriority; label: string }[] = [
   { value: 'low', label: '低' },
 ];
 
-export function TaskForm({ onSubmit, onCancel }: Props) {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [priority, setPriority] = useState<TaskPriority>('medium');
-  const [dueDate, setDueDate] = useState('');
+export function TaskForm({ onSubmit, onCancel, initial, submitLabel }: Props) {
+  const [title, setTitle] = useState(initial?.title ?? '');
+  const [description, setDescription] = useState(initial?.description ?? '');
+  const [priority, setPriority] = useState<TaskPriority>(initial?.priority ?? 'medium');
+  const [dueDate, setDueDate] = useState(initial?.dueDate ?? '');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -124,7 +126,7 @@ export function TaskForm({ onSubmit, onCancel }: Props) {
           disabled={submitting}
           className="rounded bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
         >
-          {submitting ? '保存中...' : '保存する'}
+          {submitting ? '保存中...' : (submitLabel ?? '保存する')}
         </button>
       </div>
     </form>
