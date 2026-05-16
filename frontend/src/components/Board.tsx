@@ -1,5 +1,5 @@
 import type { Task, TaskStatus } from '../types/task';
-import { Column } from './Column';
+import { Column, type SortKey } from './Column';
 
 const COLUMNS: TaskStatus[] = ['todo', 'in-progress', 'done'];
 
@@ -9,9 +9,10 @@ type Props = {
   onSelect?: (task: Task) => void;
   onDragStart: (id: number) => void;
   onDropOnColumn: (status: TaskStatus, targetIndex: number) => void;
+  onSort: (status: TaskStatus, key: SortKey) => void;
 };
 
-export function Board({ tasks, draggingId, onSelect, onDragStart, onDropOnColumn }: Props) {
+export function Board({ tasks, draggingId, onSelect, onDragStart, onDropOnColumn, onSort }: Props) {
   return (
     <div className="flex gap-4 p-6">
       {COLUMNS.map((status) => (
@@ -23,6 +24,7 @@ export function Board({ tasks, draggingId, onSelect, onDragStart, onDropOnColumn
           onSelect={onSelect}
           onDragStart={onDragStart}
           onDropOnColumn={onDropOnColumn}
+          onSort={onSort}
         />
       ))}
     </div>
