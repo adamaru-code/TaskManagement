@@ -4,6 +4,9 @@ import { createTask, fetchTasks, reorderTasks, updateTask } from './api/tasks';
 import type { Task, TaskCreateInput, TaskStatus, TaskUpdateInput } from './types/task';
 import { Header } from './components/Header';
 import { Board } from './components/Board';
+import type { SortKey } from './components/Column';
+
+const PRIORITY_RANK: Record<string, number> = { high: 0, medium: 1, low: 2 };
 import { TaskModal } from './components/TaskModal';
 import { TaskForm } from './components/TaskForm';
 
@@ -93,6 +96,43 @@ function App() {
     }
   }
 
+  async function handleSortColumn(status: TaskStatus, key: SortKey) {
+    const columnTasks = tasks.filter((t) => t.status === status);
+    if (columnTasks.length === 0) return;
+
+    const sorted = [...columnTasks].sort((a, b) => {
+      if (key === 'priority') {
+        return PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority];
+      }
+      if (a.dueDate == null && b.dueDate == null) return 0;
+      if (a.dueDate == null) return 1;
+      if (b.dueDate == null) return -1;
+      return a.dueDate.localeCompare(b.dueDate);
+    });
+
+    const changed = new Map<number, Task>();
+    sorted.forEach((t, i) => {
+      if (t.displayOrder !== i) changed.set(t.id, { ...t, displayOrder: i });
+    });
+    if (changed.size === 0) return;
+
+    const prevTasks = tasks;
+    setTasks((cur) => cur.map((t) => changed.get(t.id) ?? t));
+
+    try {
+      await reorderTasks(
+        Array.from(changed.values()).map((t) => ({
+          id: t.id,
+          status: t.status,
+          displayOrder: t.displayOrder,
+        })),
+      );
+    } catch (e) {
+      setTasks(prevTasks);
+      setError(e instanceof Error ? e.message : String(e));
+    }
+  }
+
   return (
     <div className="min-h-screen bg-slate-50">
       <Header onAddClick={() => setIsCreateOpen(true)} />
@@ -108,6 +148,7 @@ function App() {
             onSelect={setEditingTask}
             onDragStart={setDraggingId}
             onDropOnColumn={handleDrop}
+            onSort={handleSortColumn}
           />
         )}
       </main>
