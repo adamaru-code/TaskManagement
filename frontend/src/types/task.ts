@@ -21,3 +21,9 @@ export type TaskCreateInput = {
 };
 
 export type TaskUpdateInput = TaskCreateInput;
+
+export type TaskReorderItem = {
+  id: number;
+  status: TaskStatus;
+  displayOrder: number;
+};

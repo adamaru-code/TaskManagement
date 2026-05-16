@@ -2,12 +2,15 @@ package com.example.taskmanagement;
 
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -56,5 +59,25 @@ public class TaskController {
         task.setDueDate(request.getDueDate());
         task.setUpdatedAt(LocalDateTime.now());
         return taskRepository.save(task);
+    }
+
+    @PatchMapping("/reorder")
+    public ResponseEntity<Void> reorder(@Valid @RequestBody TaskReorderRequest request) {
+        List<Long> ids = request.getItems().stream().map(TaskReorderRequest.Item::getId).toList();
+        List<Task> tasks = taskRepository.findAllById(ids);
+        if (tasks.size() != ids.size()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Some tasks not found");
+        }
+        Map<Long, Task> byId = new HashMap<>();
+        tasks.forEach(t -> byId.put(t.getId(), t));
+        LocalDateTime now = LocalDateTime.now();
+        for (TaskReorderRequest.Item item : request.getItems()) {
+            Task task = byId.get(item.getId());
+            task.setStatus(item.getStatus());
+            task.setDisplayOrder(item.getDisplayOrder());
+            task.setUpdatedAt(now);
+        }
+        taskRepository.saveAll(tasks);
+        return ResponseEntity.noContent().build();
     }
 }
