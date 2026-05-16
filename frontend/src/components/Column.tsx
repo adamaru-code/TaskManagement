@@ -7,14 +7,31 @@ const statusMeta: Record<TaskStatus, { label: string; dot: string }> = {
   done: { label: '完了', dot: 'bg-green-500' },
 };
 
-type Props = { status: TaskStatus; tasks: Task[]; onSelect?: (task: Task) => void };
+type Props = {
+  status: TaskStatus;
+  tasks: Task[];
+  draggingId: number | null;
+  onSelect?: (task: Task) => void;
+  onDragStart: (id: number) => void;
+  onDropOnColumn: (status: TaskStatus, targetIndex: number) => void;
+};
 
-export function Column({ status, tasks, onSelect }: Props) {
+export function Column({ status, tasks, draggingId, onSelect, onDragStart, onDropOnColumn }: Props) {
   const meta = statusMeta[status];
   const sorted = [...tasks].sort((a, b) => a.displayOrder - b.displayOrder);
 
   return (
-    <section className="flex-1 bg-slate-100 rounded-lg p-3 min-w-[280px]">
+    <section
+      onDragOver={(e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+      }}
+      onDrop={(e) => {
+        e.preventDefault();
+        onDropOnColumn(status, sorted.length);
+      }}
+      className="flex-1 bg-slate-100 rounded-lg p-3 min-w-[280px]"
+    >
       <header className="flex items-center justify-between mb-3 px-1">
         <div className="flex items-center gap-2">
           <span className={`inline-block w-2 h-2 rounded-full ${meta.dot}`} />
@@ -22,9 +39,17 @@ export function Column({ status, tasks, onSelect }: Props) {
         </div>
         <span className="text-xs text-slate-500">{sorted.length}</span>
       </header>
-      <div>
-        {sorted.map((t) => (
-          <TaskCard key={t.id} task={t} onSelect={onSelect} />
+      <div className="min-h-[40px]">
+        {sorted.map((t, i) => (
+          <TaskCard
+            key={t.id}
+            task={t}
+            index={i}
+            isDragging={draggingId === t.id}
+            onSelect={onSelect}
+            onDragStart={onDragStart}
+            onDropOnCard={(targetIndex) => onDropOnColumn(status, targetIndex)}
+          />
         ))}
       </div>
     </section>

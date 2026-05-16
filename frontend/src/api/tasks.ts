@@ -1,4 +1,4 @@
-import type { Task, TaskCreateInput, TaskUpdateInput } from '../types/task';
+import type { Task, TaskCreateInput, TaskReorderItem, TaskUpdateInput } from '../types/task';
 
 export async function fetchTasks(): Promise<Task[]> {
   const res = await fetch('/api/tasks');
@@ -33,6 +33,17 @@ export async function createTask(input: TaskCreateInput): Promise<Task> {
     throw await parseValidationError(res, 'Failed to create task');
   }
   return res.json();
+}
+
+export async function reorderTasks(items: TaskReorderItem[]): Promise<void> {
+  const res = await fetch('/api/tasks/reorder', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ items }),
+  });
+  if (!res.ok) {
+    throw await parseValidationError(res, 'Failed to reorder tasks');
+  }
 }
 
 export async function updateTask(id: number, input: TaskUpdateInput): Promise<Task> {
