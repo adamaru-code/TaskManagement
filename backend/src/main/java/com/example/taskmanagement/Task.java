@@ -21,31 +21,31 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Task {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(name = "title", nullable = false, length = 50)
-    private String title;
+  @Column(name = "title", nullable = false, length = 50)
+  private String title;
 
-    @Column(name = "description", length = 200)
-    private String description;
+  @Column(name = "description", length = 200)
+  private String description;
 
-    @Column(name = "priority", nullable = false, length = 10)
-    private String priority;
+  @Column(name = "priority", nullable = false, length = 10)
+  private String priority;
 
-    @Column(name = "due_date")
-    private LocalDate dueDate;
+  @Column(name = "due_date")
+  private LocalDate dueDate;
 
-    @Column(name = "status", nullable = false, length = 20)
-    private String status;
+  @Column(name = "status", nullable = false, length = 20)
+  private String status;
 
-    @Column(name = "display_order", nullable = false)
-    private Integer displayOrder;
+  @Column(name = "display_order", nullable = false)
+  private Integer displayOrder;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+  @Column(name = "created_at", nullable = false)
+  private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
+  @Column(name = "updated_at", nullable = false)
+  private LocalDateTime updatedAt;
 }

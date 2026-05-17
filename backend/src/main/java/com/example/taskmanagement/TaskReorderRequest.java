@@ -15,24 +15,19 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TaskReorderRequest {
 
-    @NotEmpty
-    @Valid
-    private List<Item> items;
+  @NotEmpty @Valid private List<Item> items;
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    public static class Item {
+  @Getter
+  @Setter
+  @NoArgsConstructor
+  public static class Item {
 
-        @NotNull
-        private Long id;
+    @NotNull private Long id;
 
-        @NotNull
-        @Pattern(regexp = "todo|in-progress|done")
-        private String status;
+    @NotNull
+    @Pattern(regexp = "todo|in-progress|done")
+    private String status;
 
-        @NotNull
-        @PositiveOrZero
-        private Integer displayOrder;
-    }
+    @NotNull @PositiveOrZero private Integer displayOrder;
+  }
 }

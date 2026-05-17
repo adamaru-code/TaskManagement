@@ -25,17 +25,19 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class TaskController {
 
-    private final TaskRepository taskRepository;
+  private final TaskRepository taskRepository;
 
-    @GetMapping
-    public List<Task> list() {
-        return taskRepository.findAll(Sort.by("status").ascending().and(Sort.by("displayOrder").ascending()));
-    }
+  @GetMapping
+  public List<Task> list() {
+    return taskRepository.findAll(
+        Sort.by("status").ascending().and(Sort.by("displayOrder").ascending()));
+  }
 
-    @PostMapping
-    public ResponseEntity<Task> create(@Valid @RequestBody TaskCreateRequest request) {
-        LocalDateTime now = LocalDateTime.now();
-        Task task = new Task(
+  @PostMapping
+  public ResponseEntity<Task> create(@Valid @RequestBody TaskCreateRequest request) {
+    LocalDateTime now = LocalDateTime.now();
+    Task task =
+        new Task(
             null,
             request.getTitle(),
             request.getDescription(),
@@ -44,49 +46,52 @@ public class TaskController {
             "todo",
             taskRepository.countByStatus("todo"),
             now,
-            now
-        );
-        Task saved = taskRepository.save(task);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
-    }
+            now);
+    Task saved = taskRepository.save(task);
+    return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+  }
 
-    @PutMapping("/{id}")
-    public Task update(@PathVariable Long id, @Valid @RequestBody TaskUpdateRequest request) {
-        Task task = taskRepository.findById(id)
+  @PutMapping("/{id}")
+  public Task update(@PathVariable Long id, @Valid @RequestBody TaskUpdateRequest request) {
+    Task task =
+        taskRepository
+            .findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found"));
-        task.setTitle(request.getTitle());
-        task.setDescription(request.getDescription());
-        task.setPriority(request.getPriority());
-        task.setDueDate(request.getDueDate());
-        task.setUpdatedAt(LocalDateTime.now());
-        return taskRepository.save(task);
-    }
+    task.setTitle(request.getTitle());
+    task.setDescription(request.getDescription());
+    task.setPriority(request.getPriority());
+    task.setDueDate(request.getDueDate());
+    task.setUpdatedAt(LocalDateTime.now());
+    return taskRepository.save(task);
+  }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        Task task = taskRepository.findById(id)
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable Long id) {
+    Task task =
+        taskRepository
+            .findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found"));
-        taskRepository.delete(task);
-        return ResponseEntity.noContent().build();
-    }
+    taskRepository.delete(task);
+    return ResponseEntity.noContent().build();
+  }
 
-    @PatchMapping("/reorder")
-    public ResponseEntity<Void> reorder(@Valid @RequestBody TaskReorderRequest request) {
-        List<Long> ids = request.getItems().stream().map(TaskReorderRequest.Item::getId).toList();
-        List<Task> tasks = taskRepository.findAllById(ids);
-        if (tasks.size() != ids.size()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Some tasks not found");
-        }
-        Map<Long, Task> byId = new HashMap<>();
-        tasks.forEach(t -> byId.put(t.getId(), t));
-        LocalDateTime now = LocalDateTime.now();
-        for (TaskReorderRequest.Item item : request.getItems()) {
-            Task task = byId.get(item.getId());
-            task.setStatus(item.getStatus());
-            task.setDisplayOrder(item.getDisplayOrder());
-            task.setUpdatedAt(now);
-        }
-        taskRepository.saveAll(tasks);
-        return ResponseEntity.noContent().build();
+  @PatchMapping("/reorder")
+  public ResponseEntity<Void> reorder(@Valid @RequestBody TaskReorderRequest request) {
+    List<Long> ids = request.getItems().stream().map(TaskReorderRequest.Item::getId).toList();
+    List<Task> tasks = taskRepository.findAllById(ids);
+    if (tasks.size() != ids.size()) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Some tasks not found");
     }
+    Map<Long, Task> byId = new HashMap<>();
+    tasks.forEach(t -> byId.put(t.getId(), t));
+    LocalDateTime now = LocalDateTime.now();
+    for (TaskReorderRequest.Item item : request.getItems()) {
+      Task task = byId.get(item.getId());
+      task.setStatus(item.getStatus());
+      task.setDisplayOrder(item.getDisplayOrder());
+      task.setUpdatedAt(now);
+    }
+    taskRepository.saveAll(tasks);
+    return ResponseEntity.noContent().build();
+  }
 }
