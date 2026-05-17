@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Task, TaskStatus } from '../types/task';
 import { TaskCard } from './TaskCard';
 
@@ -32,6 +33,17 @@ export function Column({
 }: Props) {
   const meta = statusMeta[status];
   const sorted = [...tasks].sort((a, b) => a.displayOrder - b.displayOrder);
+  const [activeSort, setActiveSort] = useState<SortKey | null>(null);
+
+  function handleSortClick(key: SortKey) {
+    setActiveSort(key);
+    onSort(status, key);
+  }
+
+  const baseBtn =
+    'text-xs rounded border px-2 py-1';
+  const activeBtn = 'border-slate-900 bg-slate-900 text-white';
+  const inactiveBtn = 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50';
 
   return (
     <section
@@ -55,15 +67,17 @@ export function Column({
       <div className="flex gap-2 mb-3 px-1">
         <button
           type="button"
-          onClick={() => onSort(status, 'priority')}
-          className="text-xs rounded border border-slate-300 bg-white px-2 py-1 text-slate-700 hover:bg-slate-50"
+          onClick={() => handleSortClick('priority')}
+          aria-pressed={activeSort === 'priority'}
+          className={`${baseBtn} ${activeSort === 'priority' ? activeBtn : inactiveBtn}`}
         >
           優先度順
         </button>
         <button
           type="button"
-          onClick={() => onSort(status, 'dueDate')}
-          className="text-xs rounded border border-slate-300 bg-white px-2 py-1 text-slate-700 hover:bg-slate-50"
+          onClick={() => handleSortClick('dueDate')}
+          aria-pressed={activeSort === 'dueDate'}
+          className={`${baseBtn} ${activeSort === 'dueDate' ? activeBtn : inactiveBtn}`}
         >
           期限順
         </button>
