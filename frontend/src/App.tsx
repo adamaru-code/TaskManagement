@@ -107,14 +107,19 @@ function App() {
     const columnTasks = tasks.filter((t) => t.status === status);
     if (columnTasks.length === 0) return;
 
-    const sorted = [...columnTasks].sort((a, b) => {
-      if (key === 'priority') {
-        return PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority];
-      }
+    const compareDueDate = (a: Task, b: Task) => {
       if (a.dueDate == null && b.dueDate == null) return 0;
       if (a.dueDate == null) return 1;
       if (b.dueDate == null) return -1;
       return a.dueDate.localeCompare(b.dueDate);
+    };
+    const sorted = [...columnTasks].sort((a, b) => {
+      if (key === 'priority') {
+        const diff = PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority];
+        if (diff !== 0) return diff;
+        return compareDueDate(a, b);
+      }
+      return compareDueDate(a, b);
     });
 
     const changed = new Map<number, Task>();
