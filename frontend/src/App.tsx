@@ -5,10 +5,10 @@ import type { Task, TaskCreateInput, TaskStatus, TaskUpdateInput } from './types
 import { Header } from './components/Header';
 import { Board } from './components/Board';
 import type { SortKey } from './components/Column';
-
-const PRIORITY_RANK: Record<string, number> = { high: 0, medium: 1, low: 2 };
 import { TaskModal } from './components/TaskModal';
 import { TaskForm } from './components/TaskForm';
+
+const PRIORITY_RANK: Record<string, number> = { high: 0, medium: 1, low: 2 };
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
