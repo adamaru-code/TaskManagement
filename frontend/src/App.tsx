@@ -5,10 +5,10 @@ import type { Task, TaskCreateInput, TaskStatus, TaskUpdateInput } from './types
 import { Header } from './components/Header';
 import { Board } from './components/Board';
 import type { SortKey } from './components/Column';
-
-const PRIORITY_RANK: Record<string, number> = { high: 0, medium: 1, low: 2 };
 import { TaskModal } from './components/TaskModal';
 import { TaskForm } from './components/TaskForm';
+
+const PRIORITY_RANK: Record<string, number> = { high: 0, medium: 1, low: 2 };
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -72,8 +72,7 @@ function App() {
     if (sourceStatus === targetStatus && fromIndex === insertIndex) return;
 
     const newSource = sourceCol.filter((t) => t.id !== draggedId);
-    const newTarget =
-      sourceStatus === targetStatus ? newSource : targetCol.slice();
+    const newTarget = sourceStatus === targetStatus ? newSource : targetCol.slice();
     newTarget.splice(insertIndex, 0, { ...dragged, status: targetStatus });
 
     const changed = new Map<number, Task>();
@@ -150,9 +149,7 @@ function App() {
       <Header />
       <main>
         {loading && <p className="p-6 text-slate-600">読み込み中...</p>}
-        {error && (
-          <p className="p-6 text-red-600">エラー: {error}</p>
-        )}
+        {error && <p className="p-6 text-red-600">エラー: {error}</p>}
         {!loading && (
           <Board
             tasks={tasks}

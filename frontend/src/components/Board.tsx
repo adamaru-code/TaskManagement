@@ -13,7 +13,15 @@ type Props = {
   onAddClick: () => void;
 };
 
-export function Board({ tasks, draggingId, onSelect, onDragStart, onDropOnColumn, onSort, onAddClick }: Props) {
+export function Board({
+  tasks,
+  draggingId,
+  onSelect,
+  onDragStart,
+  onDropOnColumn,
+  onSort,
+  onAddClick,
+}: Props) {
   return (
     <div className="flex gap-4 p-6">
       {COLUMNS.map((status) => (
