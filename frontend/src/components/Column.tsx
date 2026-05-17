@@ -40,8 +40,7 @@ export function Column({
     onSort(status, key);
   }
 
-  const baseBtn =
-    'text-xs rounded border px-2 py-1';
+  const baseBtn = 'text-xs rounded border px-2 py-1';
   const activeBtn = 'border-slate-900 bg-slate-900 text-white';
   const inactiveBtn = 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50';
 

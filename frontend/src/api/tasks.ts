@@ -10,14 +10,15 @@ export async function fetchTasks(): Promise<Task[]> {
 
 async function parseValidationError(res: Response, fallback: string): Promise<Error> {
   if (res.status === 400) {
-    const body = (await res.json().catch(() => null)) as
-      | { message?: string; errors?: Record<string, string> }
-      | null;
+    const body = (await res.json().catch(() => null)) as {
+      message?: string;
+      errors?: Record<string, string>;
+    } | null;
     const detail = body?.errors
       ? Object.entries(body.errors)
           .map(([k, v]) => `${k}: ${v}`)
           .join(' / ')
-      : body?.message ?? 'Validation failed';
+      : (body?.message ?? 'Validation failed');
     return new Error(detail);
   }
   return new Error(`${fallback}: ${res.status} ${res.statusText}`);
