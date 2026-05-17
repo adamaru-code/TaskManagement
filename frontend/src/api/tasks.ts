@@ -57,3 +57,10 @@ export async function updateTask(id: number, input: TaskUpdateInput): Promise<Ta
   }
   return res.json();
 }
+
+export async function deleteTask(id: number): Promise<void> {
+  const res = await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
+  if (!res.ok) {
+    throw await parseValidationError(res, 'Failed to delete task');
+  }
+}
