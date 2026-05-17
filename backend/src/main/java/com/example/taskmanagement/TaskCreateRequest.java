@@ -13,16 +13,16 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TaskCreateRequest {
 
-    @NotBlank
-    @Size(min = 1, max = 50)
-    private String title;
+  @NotBlank
+  @Size(min = 1, max = 50)
+  private String title;
 
-    @Size(max = 200)
-    private String description;
+  @Size(max = 200)
+  private String description;
 
-    @NotBlank
-    @Pattern(regexp = "high|medium|low")
-    private String priority;
+  @NotBlank
+  @Pattern(regexp = "high|medium|low")
+  private String priority;
 
-    private LocalDate dueDate;
+  private LocalDate dueDate;
 }
