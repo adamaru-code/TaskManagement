@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import { createTask, fetchTasks, reorderTasks, updateTask } from './api/tasks';
+import { createTask, deleteTask, fetchTasks, reorderTasks, updateTask } from './api/tasks';
 import type { Task, TaskCreateInput, TaskStatus, TaskUpdateInput } from './types/task';
 import { Header } from './components/Header';
 import { Board } from './components/Board';
@@ -36,6 +36,13 @@ function App() {
     if (!editingTask) return;
     const updated = await updateTask(editingTask.id, input);
     setTasks((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
+    setEditingTask(null);
+  }
+
+  async function handleDelete() {
+    if (!editingTask) return;
+    await deleteTask(editingTask.id);
+    setTasks((prev) => prev.filter((t) => t.id !== editingTask.id));
     setEditingTask(null);
   }
 
@@ -165,6 +172,7 @@ function App() {
             submitLabel="更新する"
             onSubmit={handleUpdate}
             onCancel={() => setEditingTask(null)}
+            onDelete={handleDelete}
           />
         </TaskModal>
       )}

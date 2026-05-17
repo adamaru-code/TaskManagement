@@ -6,6 +6,7 @@ type Props = {
   onCancel: () => void;
   initial?: Task;
   submitLabel?: string;
+  onDelete?: () => Promise<void>;
 };
 
 const PRIORITIES: { value: TaskPriority; label: string }[] = [
@@ -14,13 +15,27 @@ const PRIORITIES: { value: TaskPriority; label: string }[] = [
   { value: 'low', label: '低' },
 ];
 
-export function TaskForm({ onSubmit, onCancel, initial, submitLabel }: Props) {
+export function TaskForm({ onSubmit, onCancel, initial, submitLabel, onDelete }: Props) {
   const [title, setTitle] = useState(initial?.title ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
   const [priority, setPriority] = useState<TaskPriority>(initial?.priority ?? 'medium');
   const [dueDate, setDueDate] = useState(initial?.dueDate ?? '');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  async function handleDelete() {
+    if (!onDelete) return;
+    if (!window.confirm('このタスクを削除しますか？')) return;
+    setError(null);
+    setDeleting(true);
+    try {
+      await onDelete();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+      setDeleting(false);
+    }
+  }
 
   function validate(): string | null {
     const trimmed = title.trim();
@@ -112,22 +127,36 @@ export function TaskForm({ onSubmit, onCancel, initial, submitLabel }: Props) {
 
       {error && <p className="text-sm text-red-600">{error}</p>}
 
-      <div className="flex justify-end gap-2 pt-2">
-        <button
-          type="button"
-          onClick={onCancel}
-          disabled={submitting}
-          className="rounded border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-        >
-          キャンセル
-        </button>
-        <button
-          type="submit"
-          disabled={submitting}
-          className="rounded bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
-        >
-          {submitting ? '保存中...' : (submitLabel ?? '保存する')}
-        </button>
+      <div className="flex items-center justify-between gap-2 pt-2">
+        <div>
+          {onDelete && (
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={submitting || deleting}
+              className="rounded border border-red-300 px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
+            >
+              {deleting ? '削除中...' : '削除する'}
+            </button>
+          )}
+        </div>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={submitting || deleting}
+            className="rounded border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+          >
+            キャンセル
+          </button>
+          <button
+            type="submit"
+            disabled={submitting || deleting}
+            className="rounded bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+          >
+            {submitting ? '保存中...' : (submitLabel ?? '保存する')}
+          </button>
+        </div>
       </div>
     </form>
   );
