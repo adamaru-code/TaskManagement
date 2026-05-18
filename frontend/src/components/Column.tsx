@@ -42,6 +42,7 @@ export function Column({
 
   const baseBtn = 'text-xs rounded border px-2 py-1';
   const activeBtn = 'border-slate-900 bg-slate-900 text-white';
+  const activePriorityBtn = 'border-red-600 bg-red-600 text-white';
   const inactiveBtn = 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50';
 
   return (
@@ -68,7 +69,7 @@ export function Column({
           type="button"
           onClick={() => handleSortClick('priority')}
           aria-pressed={activeSort === 'priority'}
-          className={`${baseBtn} ${activeSort === 'priority' ? activeBtn : inactiveBtn}`}
+          className={`${baseBtn} ${activeSort === 'priority' ? activePriorityBtn : inactiveBtn}`}
         >
           優先度順
         </button>
