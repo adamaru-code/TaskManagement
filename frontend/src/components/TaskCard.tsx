@@ -2,8 +2,8 @@ import type { Task, TaskPriority } from '../types/task';
 
 const priorityBadge: Record<TaskPriority, { emoji: string; label: string; border: string }> = {
   high: { emoji: '🔴', label: 'High', border: 'border-l-red-500' },
-  medium: { emoji: '🟡', label: 'Medium', border: 'border-l-yellow-500' },
-  low: { emoji: '🟢', label: 'Low', border: 'border-l-green-500' },
+  medium: { emoji: '🟢', label: 'Medium', border: 'border-l-green-500' },
+  low: { emoji: '🟡', label: 'Low', border: 'border-l-yellow-500' },
 };
 
 type Props = {
