@@ -53,6 +53,7 @@ RaiseTech Web アプリ開発コースの学習成果物として、React + Spri
 | [データ定義](docs/data-definition.md) | `tasks` テーブルのスキーマ詳細 |
 | [非機能要件](docs/non-functional-requirements.md) | 性能・可用性・セキュリティなど |
 | [技術スタック](docs/tech-stack.md) | 採用技術と確定バージョン |
+| [AWS デプロイ手順書](docs/aws-deploy-guide.md) | AWS CLI + Terraform でのデプロイ手順（初学者向け解説つき） |
 
 開発ルール（Issue → Branch → PR のフロー、コミット規約、起動ポート）は [CLAUDE.md](CLAUDE.md) に集約している。
 
