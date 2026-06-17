@@ -1,0 +1,15 @@
+# Terraform の作業用ファイル・秘密情報はコミットしない
+
+# プロバイダのバイナリやキャッシュ
+.terraform/
+.terraform.lock.hcl
+
+# 状態ファイル（作ったリソースの実体情報。秘密情報を含むため絶対コミットしない）
+*.tfstate
+*.tfstate.*
+
+# 実際の変数値（IP など環境固有の値）。example だけ共有する
+terraform.tfvars
+
+# plan の出力
+*.tfplan
