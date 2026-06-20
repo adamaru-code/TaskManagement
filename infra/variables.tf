@@ -31,3 +31,30 @@ variable "instance_type" {
   type        = string
   default     = "t3.micro"
 }
+
+# --- Stage 3（RDS）用に追加 ---
+
+variable "db_name" {
+  description = "作成する PostgreSQL のデータベース名"
+  type        = string
+  default     = "taskmanagement"
+}
+
+variable "db_username" {
+  description = "PostgreSQL の管理ユーザー名"
+  type        = string
+  default     = "taskmanagement"
+}
+
+variable "db_password" {
+  description = "PostgreSQL のパスワード（8文字以上）。terraform.tfvars で指定する"
+  type        = string
+  sensitive   = true # ログや plan 出力に値を表示しない
+  # 既定値は置かない。秘密情報なので必ず tfvars で渡す。
+}
+
+variable "db_instance_class" {
+  description = "RDS のインスタンスクラス"
+  type        = string
+  default     = "db.t4g.micro"
+}

@@ -55,3 +55,28 @@ resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public.id
   route_table_id = aws_route_table.public.id
 }
+
+# --- ここから Stage 3（RDS）用に追加 ---
+
+# RDS 用のプライベートサブネット ×2。
+# RDS の「DBサブネットグループ」は、異なる2つのAZ(可用性ゾーン)のサブネットを要求するため2つ作る。
+# インターネットゲートウェイへの経路を持たない＝外部から直接アクセスできない（DBを守るための定石）。
+resource "aws_subnet" "private_a" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.11.0/24"
+  availability_zone = "${var.aws_region}a"
+
+  tags = {
+    Name = "${var.project_name}-private-subnet-a"
+  }
+}
+
+resource "aws_subnet" "private_c" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.12.0/24"
+  availability_zone = "${var.aws_region}c"
+
+  tags = {
+    Name = "${var.project_name}-private-subnet-c"
+  }
+}
