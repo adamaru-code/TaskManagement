@@ -1,16 +1,33 @@
 # infra/ — Terraform でインフラを作る
 
 AWS デプロイ手順書（[../docs/aws-deploy-guide.md](../docs/aws-deploy-guide.md)）に基づく Terraform コード。
-**段階的**に作る方針で、現在は **Stage 1（ネットワーク + EC2）** まで。
+**段階的**に作る方針。
 
 ## 段階
 
 | Stage | 内容 | 状態 |
 |---|---|---|
-| 1 | ネットワーク + EC2 1台 | ✅ このコード |
+| 1 | ネットワーク + EC2 1台 | ✅ |
 | 2 | EC2 の動作確認 | — |
-| 3 | RDS（PostgreSQL）を追加 | 未 |
-| 4 | アプリのデプロイ（nginx + Spring Boot） | 未 |
+| 3 | RDS（PostgreSQL）を追加 | ✅ |
+| 4 | アプリのデプロイ（nginx 同居・CloudFront/S3 なし） | ✅ このコード |
+| 5 | S3 を追加（ファイル置き場など。用途は後で決定） | 未 |
+
+## 構成（Stage 4）
+
+CloudFront / S3 を使わず、**EC2 に nginx を同居**させるシンプルな構成。
+入口は EC2 の 80番(nginx)だけで、許可元は**自分のグローバルIPのみ**（CloudFront を介さないため）。
+
+```
+あなたのPC ─HTTP→ EC2 :80 (nginx)
+                    ├─ /api/*  → 127.0.0.1:8080 (Spring Boot)
+                    └─ /, /assets/* → React 静的ファイル(/usr/share/nginx/html)
+                                      Spring Boot ──→ RDS(PostgreSQL)
+```
+
+- フロントは相対パス `fetch('/api/...')` を使うため、nginx で同一オリジンに集約でき **CORS 不要**。
+- 8080 は nginx が localhost 内で転送するだけなので**外部公開しない**。
+- HTTPS は未対応（平文 HTTP）。必要になれば前段に CloudFront を置くか、独自ドメイン + Let's Encrypt を nginx に入れる。
 
 ## 前提
 

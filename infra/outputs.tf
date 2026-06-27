@@ -11,6 +11,11 @@ output "ssh_command" {
   value       = "ssh -i ~/.ssh/taskmanagement-ec2 ec2-user@${aws_eip.app.public_ip}"
 }
 
+output "app_url" {
+  description = "ブラウザでアプリを開く URL（nginx 経由・HTTP）。許可元は自分のIPのみ"
+  value       = "http://${aws_eip.app.public_ip}/"
+}
+
 # --- Stage 3（RDS）用に追加 ---
 
 output "rds_endpoint" {
