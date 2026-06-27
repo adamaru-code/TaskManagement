@@ -23,12 +23,14 @@ resource "aws_instance" "app" {
   key_name               = aws_key_pair.main.key_name
 
   # 起動時に一度だけ実行されるスクリプト。
-  # Docker（Spring Boot を動かす用）と nginx（入口＝静的配信＋API プロキシ）を入れる。
+  #   - nginx … 入口（静的配信＋API プロキシ）
+  #   - Java 25 … Spring Boot(JAR)を動かすための実行環境（backend/build.gradle が Java 25）
+  #   - docker … 将来コンテナ運用する場合に備えて同梱
   user_data = <<-EOF
     #!/bin/bash
     set -eux
     dnf update -y
-    dnf install -y docker nginx
+    dnf install -y docker nginx java-25-amazon-corretto
     systemctl enable --now docker
     usermod -aG docker ec2-user
 

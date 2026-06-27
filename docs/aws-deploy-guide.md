@@ -683,12 +683,18 @@ scp -i ~/.ssh/taskmanagement-ec2 build/libs/*.jar ec2-user@<EC2のIP>:/home/ec2-
 # EC2 に入って起動（接続先 RDS は terraform output rds_address で確認）
 ssh -i ~/.ssh/taskmanagement-ec2 ec2-user@<EC2のIP>
 # --- 以下 EC2 内 ---
-sudo dnf install -y java-21-amazon-corretto   # JDK（Spring Boot のバージョンに合わせる）
+# Java 25 は user_data で導入済み（このアプリは Java 25 が必須）。確認だけしておく:
+java -version                                  # 25 系が表示されれば OK
 export SPRING_DATASOURCE_URL="jdbc:postgresql://<RDSのアドレス>:5432/taskmanagement"
 export SPRING_DATASOURCE_USERNAME="taskmanagement"
 export SPRING_DATASOURCE_PASSWORD="<DBパスワード>"
 java -jar app.jar
 ```
+
+> **Java は 25 が必須**です（[backend/build.gradle](../backend/build.gradle) の `JavaLanguageVersion.of(25)`）。
+> Java 21 など古い版では `UnsupportedClassVersionError` で起動しません。EC2 には `user_data` で
+> `java-25-amazon-corretto` を自動インストール済みです。万一 `java -version` が出ない場合は、
+> `sudo dnf install -y java-25-amazon-corretto` を手動実行してください。
 
 > ローカルの `application.properties` は `localhost:5432` 固定ですが、本番では Spring Boot の
 > **環境変数オーバーライド**（`SPRING_DATASOURCE_URL` など）で接続先を RDS に上書きします。
