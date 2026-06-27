@@ -22,12 +22,13 @@ resource "aws_instance" "app" {
   vpc_security_group_ids = [aws_security_group.ec2.id]
   key_name               = aws_key_pair.main.key_name
 
-  # 起動時に一度だけ実行されるスクリプト。Docker と Docker Compose を入れておく。
+  # 起動時に一度だけ実行されるスクリプト。
+  # Docker（Spring Boot を動かす用）と nginx（入口＝静的配信＋API プロキシ）を入れる。
   user_data = <<-EOF
     #!/bin/bash
     set -eux
     dnf update -y
-    dnf install -y docker
+    dnf install -y docker nginx
     systemctl enable --now docker
     usermod -aG docker ec2-user
 
@@ -36,6 +37,40 @@ resource "aws_instance" "app" {
     curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 \
       -o /usr/local/lib/docker/cli-plugins/docker-compose
     chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+
+    # nginx を「入口」として設定する（構成 B）。
+    #   - /         → EC2 上の React 静的ファイル（/usr/share/nginx/html）を配信
+    #   - /api/*    → localhost:8080（Spring Boot）へリバースプロキシ
+    # フロントは相対パス fetch('/api/...') を使うため、同一オリジンで CORS が起きない。
+    cat > /etc/nginx/conf.d/app.conf <<'NGINX'
+    server {
+        listen 80 default_server;
+        server_name _;
+
+        # React 静的ファイル（npm run build の dist をここに配置する）
+        root /usr/share/nginx/html;
+        index index.html;
+
+        # API は Spring Boot に転送（/api はパスごと渡す）
+        location /api/ {
+            proxy_pass http://127.0.0.1:8080;
+            proxy_set_header Host              $host;
+            proxy_set_header X-Real-IP         $remote_addr;
+            proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        # SPA フォールバック：未知のパスは index.html を返す（React Router 対策）
+        location / {
+            try_files $uri $uri/ /index.html;
+        }
+    }
+    NGINX
+
+    # 上の server は default_server 指定なので、Amazon Linux 既定の server(_)よりも
+    # 優先して全リクエストを受ける。設定を検証してから起動する。
+    nginx -t
+    systemctl enable --now nginx
   EOF
 
   tags = {

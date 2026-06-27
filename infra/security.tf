@@ -1,10 +1,12 @@
 # security.tf
 # セキュリティグループ = EC2 への通信を絞るファイアウォール。
-# Stage 1 では「自分だけ SSH できる」「Web(80) は誰でも見られる」だけ開ける。
+# 構成 B（CloudFront/S3 なし・nginx 同居）では、入口は EC2 の 80番(nginx)だけ。
+# SSH(22) も HTTP(80) も「自分のグローバルIPのみ」に絞る。
+# 8080(Spring Boot) は nginx が localhost で転送するだけなので外部公開しない。
 
 resource "aws_security_group" "ec2" {
   name        = "${var.project_name}-ec2-sg"
-  description = "Allow SSH from my IP and HTTP from anywhere"
+  description = "Allow SSH and HTTP from my IP only"
   vpc_id      = aws_vpc.main.id
 
   # SSH(22)。自分のグローバルIPからのみ許可（総当たり攻撃を避けるため全開放しない）。
@@ -16,13 +18,15 @@ resource "aws_security_group" "ec2" {
     cidr_blocks = [var.my_ip_cidr]
   }
 
-  # HTTP(80)。ブラウザからアプリを見るため全開放。
+  # HTTP(80)。ブラウザからアプリ(nginx)を見るための入口。
+  # CloudFront を使わない構成のため、ここに来るのは「自分のPC」＝自IPのみに限定する。
+  # （将来 CloudFront を前段に置く場合は、ここを CloudFront のマネージドプレフィックスリストに変える）
   ingress {
-    description = "HTTP from anywhere"
+    description = "HTTP from my IP"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.my_ip_cidr]
   }
 
   # 送信(EC2 から外向き)はすべて許可（パッケージ取得や Docker pull のため）。
